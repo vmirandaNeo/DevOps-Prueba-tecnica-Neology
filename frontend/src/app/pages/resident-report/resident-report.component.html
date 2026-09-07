@@ -1,0 +1,56 @@
+<section class="page">
+  <header class="page-header">
+    <div>
+      <h1>Reporte de residentes</h1>
+      <p>Tiempo acumulado y cobro correspondiente al mes actual.</p>
+    </div>
+    <div class="actions">
+      <button mat-stroked-button type="button" (click)="load()" [disabled]="loading">Actualizar</button>
+      <button mat-flat-button color="warn" type="button" (click)="startNewMonth()" [disabled]="actionInProgress">
+        Iniciar nuevo mes
+      </button>
+    </div>
+  </header>
+
+  <div class="metric-grid">
+    <mat-card class="metric">
+      <span>Residentes</span>
+      <strong>{{ payments.length }}</strong>
+    </mat-card>
+    <mat-card class="metric">
+      <span>Minutos acumulados</span>
+      <strong>{{ totalMinutes }}</strong>
+    </mat-card>
+    <mat-card class="metric">
+      <span>Importe total</span>
+      <strong>{{ totalAmount | currency:'MXN':'symbol-narrow' }}</strong>
+    </mat-card>
+  </div>
+
+  <mat-card class="card">
+    <mat-progress-bar *ngIf="loading" mode="indeterminate" />
+    <p *ngIf="errorMessage" class="error-state">{{ errorMessage }}</p>
+    <mat-card-content *ngIf="!errorMessage">
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="payments">
+          <ng-container matColumnDef="placa">
+            <th mat-header-cell *matHeaderCellDef>Placa</th>
+            <td mat-cell *matCellDef="let payment"><strong>{{ payment.placa }}</strong></td>
+          </ng-container>
+          <ng-container matColumnDef="minutos">
+            <th mat-header-cell *matHeaderCellDef>Minutos acumulados</th>
+            <td mat-cell *matCellDef="let payment">{{ payment.minutosAcumulados }}</td>
+          </ng-container>
+          <ng-container matColumnDef="importe">
+            <th mat-header-cell *matHeaderCellDef>Importe</th>
+            <td mat-cell *matCellDef="let payment">{{ payment.importe | currency:'MXN':'symbol-narrow' }}</td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+        <p class="empty-state" *ngIf="!loading && payments.length === 0">No hay residentes registrados.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</section>
+

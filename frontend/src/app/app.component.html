@@ -1,0 +1,15 @@
+<mat-toolbar color="primary" class="toolbar">
+  <a class="brand" routerLink="/vehiculos" aria-label="Ir al inicio">
+    <span class="brand-mark">N</span>
+    <span>Estacionamiento Neology</span>
+  </a>
+  <nav aria-label="Navegación principal">
+    <a mat-button routerLink="/vehiculos" routerLinkActive="active-link">Vehículos</a>
+    <a mat-button routerLink="/residentes" routerLinkActive="active-link">Reporte de residentes</a>
+  </nav>
+</mat-toolbar>
+
+<main>
+  <router-outlet />
+</main>
+

@@ -1,0 +1,57 @@
+.toolbar {
+  min-height: 68px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 max(16px, calc((100vw - 1180px) / 2));
+  box-shadow: 0 3px 18px rgba(16, 24, 40, 0.18);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.brand-mark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 10px;
+  color: #3f51b5;
+  background: #fff;
+  font-weight: 800;
+}
+
+nav {
+  display: flex;
+  gap: 4px;
+}
+
+nav a {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+nav a.active-link {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+@media (max-width: 680px) {
+  .toolbar {
+    min-height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    padding-block: 12px;
+  }
+
+  nav {
+    overflow-x: auto;
+  }
+}
+

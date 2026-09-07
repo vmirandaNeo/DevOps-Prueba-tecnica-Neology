@@ -1,379 +1,253 @@
-# DevOps-Prueba-tecnica-Neology
+# Aplicación base — Prueba técnica DevOps Neology
 
-## Instrucciones de la prueba técnica
+Aplicación funcional de estacionamiento compuesta por un backend en Spring Boot, un frontend en Angular y dos opciones de base de datos:
 
-La siguiente prueba tiene como objetivo evaluar a los postulantes para un perfil DevOps.
+- **H2 en memoria** para ejecución local rápida.
+- **PostgreSQL** al levantar el stack con Docker Compose.
 
-## Introducción
+Este código está pensado para publicarse dentro del repositorio `DevOps-Prueba-tecnica-Neology` como material inicial de la prueba DevOps. No conviene publicarlo como solución en la rama principal de `Full-Stack-Prueba-tecnica-Neology`, porque implementa buena parte del ejercicio que debe resolver el candidato Full Stack.
 
-Este repositorio contiene una aplicación base para gestionar el acceso de vehículos a un estacionamiento:
+## Funcionalidad incluida
 
-* Frontend desarrollado en Angular.
-* Backend desarrollado en Spring Boot.
-* Base de datos PostgreSQL.
-* Pruebas básicas incluidas en ambos proyectos.
+- Alta de vehículos oficiales, residentes y no residentes.
+- Registro de entrada y salida.
+- Prevención de dos entradas simultáneas para la misma placa.
+- Cobro de residentes a `$0.05` por minuto acumulado.
+- Cobro de no residentes a `$0.50` por minuto al salir.
+- Vehículos oficiales sin cobro.
+- Listado y filtro de vehículos.
+- Detalle de vehículo y sus estancias.
+- Reporte mensual de residentes.
+- Inicio de un nuevo mes, siempre que no existan estancias abiertas.
+- Endpoint de salud para validaciones operativas.
 
-El objetivo del candidato no es desarrollar nuevas funcionalidades, sino preparar una solución automatizada, segura, observable y reproducible para construir, validar y desplegar la aplicación.
+Cada minuto iniciado se cobra como un minuto completo. Los importes se manejan con `BigDecimal` para evitar errores de punto flotante.
 
-## ¿Qué se busca evaluar?
-
-Principalmente, los siguientes aspectos:
-
-* Contenedores y buenas prácticas de construcción.
-* Automatización mediante CI/CD.
-* Uso de GitHub Actions.
-* Infraestructura como código.
-* Seguridad de imágenes, dependencias y secretos.
-* Observabilidad y diagnóstico.
-* Respaldo y recuperación.
-* Conocimientos de Linux, redes y cloud.
-* Capacidad para documentar decisiones y compromisos operativos.
-* Enfoque DevSecOps y SRE.
-
-## Consideraciones generales
-
-* Ventana sugerida para realizar la prueba: 3 días.
-* Tiempo máximo de trabajo efectivo: 5 horas.
-* La aplicación funcional será proporcionada en el repositorio.
-* No es necesario desplegar recursos reales en la nube.
-* No deberán utilizarse cuentas productivas.
-* No deberán incluirse credenciales, tokens o secretos reales.
-* Si algún punto no puede completarse, deberá documentarse cómo se resolvería.
-* Se valorará la priorización y calidad sobre la cantidad de componentes.
-
-## Objetivo general
-
-Preparar la aplicación de estacionamiento para que pueda construirse, probarse y desplegarse de forma automatizada, repetible y segura.
-
-# Parte 1 — Contenedores
-
-Crear contenedores para el frontend y backend.
-
-## Backend
-
-El Dockerfile deberá considerar:
-
-* Construcción multi-stage.
-* Java 17 o superior.
-* Ejecución con usuario no privilegiado.
-* Imagen final reducida.
-* Variables de configuración externas.
-* Health check.
-* Manejo correcto de señales.
-* Exclusión de archivos innecesarios.
-
-## Frontend
-
-El Dockerfile deberá considerar:
-
-* Construcción multi-stage.
-* Compilación de Angular.
-* Servidor web para archivos estáticos.
-* Ejecución con usuario no privilegiado cuando sea posible.
-* Configuración para Single Page Application.
-* Health check.
-* Archivo `.dockerignore`.
-
-## Entregables
-
-* `backend/Dockerfile`
-* `backend/.dockerignore`
-* `frontend/Dockerfile`
-* `frontend/.dockerignore`
-
-# Parte 2 — Ejecución local
-
-Crear un archivo `docker-compose.yml` que permita levantar:
-
-* Frontend.
-* Backend.
-* PostgreSQL.
-
-La solución deberá incluir:
-
-* Red interna.
-* Volumen persistente para PostgreSQL.
-* Variables de ambiente.
-* `.env.example`.
-* Health checks.
-* Dependencias basadas en salud.
-* Reinicio controlado de contenedores.
-* Configuración sin secretos reales.
-* Acceso del frontend al backend.
-* Migración o inicialización de la base de datos.
-
-El siguiente comando deberá levantar la solución:
-
-```bash
-docker compose up --build
-```
-
-## Entregables
-
-* `docker-compose.yml`
-* `.env.example`
-
-# Parte 3 — Integración continua con GitHub Actions
-
-Crear un pipeline que se ejecute en Pull Requests y cambios sobre la rama principal.
-
-El pipeline deberá incluir:
-
-1. Validación del frontend.
-2. Ejecución de pruebas del frontend.
-3. Compilación del frontend.
-4. Validación del backend.
-5. Ejecución de pruebas del backend.
-6. Compilación del backend.
-7. Construcción de imágenes.
-8. Análisis de vulnerabilidades.
-9. Publicación de artefactos o imágenes cuando corresponda.
-10. Evidencia clara cuando alguna etapa falle.
-
-Se deberán considerar:
-
-* Caché de dependencias.
-* Ejecución paralela cuando sea conveniente.
-* Versionado de imágenes.
-* Permisos mínimos del workflow.
-* Protección de secretos.
-* Evitar publicar imágenes desde Pull Requests no confiables.
-
-## Entregable
-
-* `.github/workflows/ci.yml`
-
-No es obligatorio publicar imágenes en un registro real. Puede documentarse o condicionarse el paso de publicación.
-
-# Parte 4 — Infraestructura como código
-
-Crear una propuesta en Terraform para desplegar la aplicación en AWS o Azure.
-
-El candidato deberá seleccionar uno de los dos proveedores.
-
-La infraestructura deberá contemplar, como mínimo:
-
-* Red o integración de red.
-* Servicio para ejecutar contenedores.
-* Balanceo o exposición segura.
-* Base de datos PostgreSQL administrada.
-* Gestión de secretos.
-* Registro de contenedores.
-* Monitoreo y logs.
-* Variables y outputs.
-* Separación entre ambientes.
-
-No es necesario ejecutar `terraform apply`.
-
-La solución deberá permitir ejecutar:
-
-```bash
-terraform fmt -check
-terraform validate
-terraform plan
-```
-
-Se deberá documentar:
-
-* Estrategia para el estado remoto.
-* Separación de ambientes.
-* Manejo de secretos.
-* Alta disponibilidad.
-* Escalamiento.
-* Estimación general de los componentes con mayor impacto en costo.
-
-## Estructura sugerida
+## Estructura
 
 ```text
-infra/
-├── modules/
-├── environments/
-│   ├── dev/
-│   └── prod/
-├── versions.tf
-├── providers.tf
-├── variables.tf
-└── outputs.tf
-```
-
-# Parte 5 — Seguridad
-
-Incluir controles básicos de seguridad:
-
-* Contenedores ejecutados sin privilegios.
-* Imágenes base confiables y versionadas.
-* Escaneo de vulnerabilidades.
-* Secretos fuera del código.
-* Permisos mínimos en GitHub Actions.
-* Validación de dependencias.
-* Comunicación segura entre componentes.
-* Propuesta de rotación de secretos.
-* Estrategia para parches de imágenes.
-
-## Entregable
-
-* `docs/security.md`
-
-# Parte 6 — Observabilidad y operación
-
-Diseñar una propuesta que incluya:
-
-* Logs estructurados.
-* Correlation ID.
-* Métricas de frontend, backend y base de datos.
-* Health, readiness y liveness checks.
-* Trazas distribuidas.
-* Dashboards principales.
-* Alertas.
-* Retención de logs.
-* Indicadores de disponibilidad y rendimiento.
-
-Definir, por lo menos:
-
-* Dos indicadores o SLI.
-* Un objetivo o SLO.
-* Cuatro alertas operativas.
-* Información necesaria para diagnosticar una petición fallida.
-
-Puede utilizarse OpenTelemetry, Prometheus, Grafana o los servicios nativos del proveedor seleccionado.
-
-No es obligatorio levantar toda la plataforma de observabilidad.
-
-## Entregable
-
-* `docs/observability.md`
-
-# Parte 7 — Respaldo y recuperación
-
-Crear scripts o comandos para:
-
-* Generar un respaldo de PostgreSQL.
-* Restaurar el respaldo.
-* Validar que el archivo generado no esté vacío.
-* Manejar errores.
-* Evitar incluir contraseñas en el script.
-
-También deberá documentarse:
-
-* Frecuencia de respaldo.
-* Retención.
-* Cifrado.
-* RPO y RTO.
-* Pruebas periódicas de restauración.
-* Responsables del proceso.
-
-## Entregables
-
-* `scripts/backup.sh`
-* `scripts/restore.sh`
-* `docs/backup-recovery.md`
-
-# Parte 8 — Diagnóstico de incidente
-
-Considere el siguiente escenario:
-
-> Después de un despliegue, la API comienza a devolver errores HTTP 500. El tiempo de respuesta aumenta, PostgreSQL alcanza el límite de conexiones y algunos contenedores se reinician.
-
-Documentar:
-
-1. Validaciones iniciales.
-2. Métricas y logs que revisaría.
-3. Cómo determinaría si el problema proviene de la aplicación, infraestructura o base de datos.
-4. Acciones inmediatas para estabilizar el servicio.
-5. Criterios para realizar rollback.
-6. Cómo evitar pérdida de información.
-7. Acciones preventivas.
-8. Mejoras que agregaría al pipeline y monitoreo.
-
-## Entregable
-
-* `docs/incident-response.md`
-
-# Estructura esperada
-
-```text
-DevOps-Prueba-tecnica-Neology/
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── backend/
-│   ├── Dockerfile
-│   └── .dockerignore
-├── frontend/
-│   ├── Dockerfile
-│   └── .dockerignore
-├── infra/
+.
+├── backend/                 API Spring Boot 3 + Java 17
+├── frontend/                SPA Angular 18 + Angular Material
 ├── scripts/
-│   ├── backup.sh
-│   └── restore.sh
-├── docs/
-│   ├── architecture.md
-│   ├── security.md
-│   ├── observability.md
-│   ├── backup-recovery.md
-│   └── incident-response.md
-├── docker-compose.yml
+│   ├── smoke-test.sh        Prueba funcional de la API
+│   ├── verify.sh            Pruebas y compilación
+│   └── verify-local-stack.sh
 ├── .env.example
+├── docker-compose.yml
 └── README.md
 ```
 
-# Entrega
+## Opción 1: levantar todo con Docker Compose
 
-El repositorio deberá incluir:
+### Requisitos
 
-* Instrucciones para ejecutar la aplicación.
-* Instrucciones para ejecutar las pruebas.
-* Instrucciones para ejecutar el pipeline.
-* Instrucciones para validar Terraform.
-* Diagrama de la solución.
-* Supuestos y decisiones.
-* Limitaciones conocidas.
-* Evidencias de ejecución.
-* Historial de commits comprensible.
+- Docker Desktop o Docker Engine con Docker Compose v2.
+- Puertos `4200` y `8080` disponibles.
 
-El candidato deberá crear una rama con el siguiente formato:
+### Ejecución
 
-```text
-entrega/nombre-apellido
+En Linux o macOS:
+
+```bash
+cp .env.example .env
+docker compose up --build
 ```
 
-Si no cuenta con permisos sobre el repositorio, podrá realizar un fork o generar un repositorio privado y compartir el acceso.
+En PowerShell:
 
-Enviar el enlace de la entrega a la consultora, copiando a:
+```powershell
+Copy-Item .env.example .env
+docker compose up --build
+```
 
-* [vmiranda@neology.mx](mailto:vmiranda@neology.mx)
-* [lluna@neopartners.mx](mailto:lluna@neopartners.mx)
+Esperar hasta que los tres servicios aparezcan como iniciados. Después abrir:
 
-# Criterios de evaluación
+- Frontend: <http://localhost:4200>
+- Salud del backend: <http://localhost:8080/actuator/health>
+- API de vehículos: <http://localhost:8080/neo/vehiculos>
 
-| Criterio                                   | Ponderación |
-| ------------------------------------------ | ----------: |
-| Contenedores y ejecución local             |        20 % |
-| CI/CD y GitHub Actions                     |        25 % |
-| Infraestructura como código                |        20 % |
-| Seguridad y DevSecOps                      |        10 % |
-| Observabilidad, resiliencia y recuperación |        15 % |
-| Documentación y decisiones técnicas        |        10 % |
+Consultar el estado:
 
-## Extras recomendados
+```bash
+docker compose ps
+docker compose logs --tail=100 backend frontend
+```
 
-* Kubernetes y Helm.
-* OpenTelemetry funcional.
-* Prometheus y Grafana.
-* Generación de SBOM.
-* Firma de imágenes.
-* Políticas como código.
-* Pruebas de infraestructura.
-* Estrategia Blue/Green o Canary.
-* Automatización de rollback.
-* Análisis básico de costos o FinOps.
+Detener sin borrar los datos:
 
-> No te preocupes si no puedes completar todos los requisitos dentro del tiempo establecido. Se valorará principalmente la calidad, la seguridad, la automatización, la capacidad de priorización y la claridad para explicar las decisiones.
+```bash
+docker compose down
+```
 
-## Revisión posterior
+Detener y borrar exclusivamente el volumen de PostgreSQL de este proyecto:
 
-Se recomienda complementar la prueba con:
+```bash
+docker compose down --volumes
+```
 
-* Presentación técnica de 30 minutos.
-* Simulación de incidente de 15 minutos.
-* Explicación de decisiones y compromisos operativos.
+## Opción 2: levantar localmente con H2
+
+### Requisitos
+
+- Java 17 o superior.
+- Maven 3.9 o superior.
+- Node.js 20 LTS y npm 10 o superior.
+- Puertos `4200` y `8080` disponibles.
+
+### Terminal 1 — backend
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+
+El perfil predeterminado usa H2 en memoria; no requiere instalar una base de datos. La consola H2 queda disponible en <http://localhost:8080/h2-console> con:
+
+- JDBC URL: `jdbc:h2:mem:parking`
+- Usuario: `sa`
+- Contraseña: vacía
+
+### Terminal 2 — frontend
+
+```bash
+cd frontend
+npm ci
+npm start
+```
+
+Abrir <http://localhost:4200>. El servidor de desarrollo redirige las llamadas `/neo` y `/actuator` hacia `http://localhost:8080`.
+
+## Validación automática
+
+### 1. Pruebas y compilación
+
+Desde la raíz del repositorio:
+
+```bash
+./scripts/verify.sh
+```
+
+El comando falla inmediatamente si ocurre alguno de estos problemas:
+
+- No compila Java.
+- Falla una prueba de negocio del backend.
+- No se pueden instalar de forma reproducible las dependencias del frontend.
+- Angular no compila en modo producción.
+
+### 2. Stack local integrado
+
+Con los puertos `4200` y `8080` libres:
+
+```bash
+./scripts/verify-local-stack.sh
+```
+
+El script levanta temporalmente backend y frontend, espera que estén disponibles y ejecuta un recorrido real contra la API. Al terminar cierra ambos procesos.
+
+### 3. Prueba funcional contra un stack ya levantado
+
+```bash
+./scripts/smoke-test.sh
+```
+
+Se valida:
+
+1. Health check del backend.
+2. Alta de un residente.
+3. Registro de entrada.
+4. Registro de salida.
+5. Aparición de la placa en el reporte de residentes.
+6. Respuesta HTTP del frontend, si está levantado.
+
+## Validación manual recomendada
+
+1. Abrir el frontend.
+2. Registrar una placa como `RESIDENTE`.
+3. Presionar **Registrar entrada**.
+4. Confirmar que el estado cambia a **Dentro**.
+5. Presionar **Registrar salida**.
+6. Abrir **Reporte de residentes** y confirmar el tiempo y el importe.
+7. Abrir el detalle del vehículo y revisar la estancia cerrada.
+8. Iniciar un nuevo mes y confirmar que el acumulado queda en cero.
+
+## API disponible
+
+| Método | Ruta | Objetivo |
+| --- | --- | --- |
+| `GET` | `/neo/vehiculos` | Listar vehículos |
+| `GET` | `/neo/vehiculos/{placa}` | Consultar vehículo y estancias |
+| `POST` | `/neo/vehiculos/oficiales` | Alta de vehículo oficial |
+| `POST` | `/neo/vehiculos/residentes` | Alta de vehículo residente |
+| `POST` | `/neo/vehiculos/no-residentes` | Alta de vehículo no residente |
+| `POST` | `/neo/estancias/entrada` | Registrar entrada |
+| `POST` | `/neo/estancias/salida` | Registrar salida y calcular cobro |
+| `GET` | `/neo/residentes/pagos` | Generar reporte de residentes |
+| `POST` | `/neo/mes/iniciar` | Reiniciar el mes |
+| `GET` | `/actuator/health` | Verificar salud del backend |
+
+Ejemplo de alta:
+
+```bash
+curl -i -X POST http://localhost:8080/neo/vehiculos/residentes \
+  -H 'Content-Type: application/json' \
+  -d '{"placa":"ABC-123"}'
+```
+
+Ejemplo de entrada:
+
+```bash
+curl -i -X POST http://localhost:8080/neo/estancias/entrada \
+  -H 'Content-Type: application/json' \
+  -d '{"placa":"ABC-123"}'
+```
+
+## Criterio para considerar que la aplicación está lista
+
+| Comprobación | Resultado esperado |
+| --- | --- |
+| `mvn test` | `BUILD SUCCESS` |
+| `npm ci` | Instalación sin conflicto de dependencias |
+| `npm run build` | Bundle de producción generado |
+| `/actuator/health` | `{"status":"UP"}` |
+| `smoke-test.sh` | Mensaje `SMOKE TEST CORRECTO` |
+| Navegador | Pantalla de vehículos visible y acciones funcionales |
+
+## Cómo publicarlo en GitHub
+
+Crear en GitHub un repositorio vacío llamado `DevOps-Prueba-tecnica-Neology`, sin README ni `.gitignore` generados por GitHub. Después, desde esta carpeta:
+
+```bash
+git init
+git add .
+git commit -m "feat: agregar aplicación base para prueba DevOps"
+git branch -M main
+git remote add origin https://github.com/ORGANIZACION/DevOps-Prueba-tecnica-Neology.git
+git push -u origin main
+```
+
+Se recomienda etiquetar la base entregada al candidato:
+
+```bash
+git tag -a app-base-v1.0.0 -m "Aplicación base validada"
+git push origin app-base-v1.0.0
+```
+
+Cada candidato debe trabajar en una rama propia:
+
+```bash
+git switch -c candidato/nombre-apellido
+git push -u origin candidato/nombre-apellido
+```
+
+La rama `main` conserva la aplicación base y permite comparar con claridad los cambios de Docker, pipeline, infraestructura, seguridad y observabilidad realizados por el candidato.
+
+## Observaciones para la evaluación DevOps
+
+La base ya contiene Dockerfiles y Compose únicamente para facilitar una referencia ejecutable. Antes de entregar la prueba puede elegirse una de estas dos modalidades:
+
+- **Evaluación desde cero:** retirar los Dockerfiles y `docker-compose.yml`; el candidato debe crearlos.
+- **Evaluación de mejora:** conservarlos y pedir al candidato que los audite, endurezca, optimice y prepare para producción.
+
+Para una prueba de cinco horas recomiendo la modalidad de mejora: permite evaluar decisiones de seguridad, eficiencia, CI/CD, IaC, observabilidad y recuperación sin consumir la mayor parte del tiempo en configuración básica.
+

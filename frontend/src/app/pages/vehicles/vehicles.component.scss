@@ -1,0 +1,15 @@
+.filter {
+  width: min(100%, 360px);
+  margin-top: 16px;
+}
+
+td,
+th {
+  white-space: nowrap;
+}
+
+td:last-child,
+th:last-child {
+  min-width: 260px;
+}
+
